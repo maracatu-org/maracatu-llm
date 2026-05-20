@@ -1,0 +1,25 @@
+task: enem_challenge
+dataset_path: eduagarcia/enem_challenge
+dataset_name: null
+training_split: null
+validation_split: null
+test_split: train
+process_docs: !function enem_utils.process_docs
+output_type: multiple_choice
+doc_to_text: "Questao: {{question}}\nA) {{choices.text[0]}}\nB) {{choices.text[1]}}\nC) {{choices.text[2]}}\nD) {{choices.text[3]}}\nE) {{choices.text[4]}}\nResposta:"
+doc_to_target: "{{['A','B','C','D','E'].index(answerKey)}}"
+doc_to_choice: ["A", "B", "C", "D", "E"]
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+  - metric: acc_norm
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
+  description: >
+    ENEM (Exame Nacional do Ensino Medio) benchmark for Brazilian Portuguese LLMs.
+    Source: eduagarcia/enem_challenge (HuggingFace).
+    1432 questions from 2009-2023, 1 anulada filtrada = 1431 validas.
+    5-choice MCQ. Random chance baseline: 20%.

@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Ambientes
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Dados (grandes demais pra Git)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/README.md
+
+# Checkpoints
+checkpoints/*
+!checkpoints/.gitkeep
+
+# Exports (safetensors, GGUF) — publicados no HF Hub, não versionar
+exports/
+.cache/
+
+# Tokenizer treinado
+tokenizer/*.model
+tokenizer/*.vocab
+
+# Logs
+logs/
+*.log
+wandb/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Claude Code (local-only)
+.claude/
+
+# Internal docs (not part of OSS release)
+docs/business.md
+docs/funding/
+
+# Kaggle credentials e staging — nunca commite
+# (.kaggle/ contém kaggle.json + subdirs de staging para uploads CLI)
+kaggle.json
+.kaggle/
+
+# Eval results — grandes, regeneraveis via scripts/eval/run_benchmarks.sh
+eval_results/

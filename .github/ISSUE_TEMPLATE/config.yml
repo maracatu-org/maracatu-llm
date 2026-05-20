@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vulnerabilidade ou problema de segurança / modelo
+    url: https://github.com/maracatu-labs/maracatu/security/advisories/new
+    about: Reporte privadamente via GitHub Security Advisories ou email contact@maracatu.org. Não abra issue pública.
+  - name: Dúvida ou discussão
+    url: https://github.com/maracatu-labs/maracatu/discussions
+    about: Para perguntas, ideias em estágio inicial e debates sobre o roadmap.
+  - name: Modelos publicados (Hugging Face)
+    url: https://huggingface.co/maracatu-ai
+    about: Para perguntas específicas sobre uso dos modelos publicados, abra discussão na página do modelo no HF.
