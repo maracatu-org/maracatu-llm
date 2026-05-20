@@ -1,39 +1,39 @@
 ---
-name: Sugerir feature
-about: Proposta de nova funcionalidade ou melhoria
+name: Suggest feature
+about: Proposal for a new feature or improvement
 title: "[feature] "
 labels: enhancement
 assignees: ''
 ---
 
-## Problema
+## Problem
 
-<!-- Qual problema essa feature resolve? Para quem? -->
+<!-- What problem does this feature solve? For whom? -->
 
-## Proposta
+## Proposal
 
-<!-- O que você está propondo? Descreva a feature ideal. -->
+<!-- What are you proposing? Describe the ideal feature. -->
 
-## Alternativas consideradas
+## Alternatives considered
 
-<!-- Já pensou em outras formas de resolver? Por que essa é melhor? -->
+<!-- Have you thought of other ways to solve it? Why is this one better? -->
 
-## Impacto
+## Impact
 
-- [ ] Mexe na arquitetura do modelo
-- [ ] Mexe no pipeline de treino
-- [ ] Adiciona / muda corpus de treino
-- [ ] Mexe no tokenizer
-- [ ] Adiciona benchmark ou eval task
-- [ ] Mexe em pipeline de publicação (HF / Ollama / Kaggle)
-- [ ] Documentação / experimentos
-- [ ] Outro:
+- [ ] Affects model architecture
+- [ ] Affects the training pipeline
+- [ ] Adds / changes training corpus
+- [ ] Affects the tokenizer
+- [ ] Adds a benchmark or eval task
+- [ ] Affects the publishing pipeline (HF / Ollama / Kaggle)
+- [ ] Documentation / experiments
+- [ ] Other:
 
-## Compatibilidade
+## Compatibility
 
-- [ ] Quebra compatibilidade com `LlamaForCausalLM` do Hugging Face? (se sim, justifique)
-- [ ] Quebra reprodução de runs anteriores? (se sim, explique como migrar)
+- [ ] Breaks compatibility with Hugging Face's `LlamaForCausalLM`? (if yes, justify)
+- [ ] Breaks reproduction of previous runs? (if yes, explain how to migrate)
 
-## Contexto adicional
+## Additional context
 
-<!-- Links para papers, exemplos de outros projetos, hardware envolvido. -->
+<!-- Links to papers, examples from other projects, hardware involved. -->

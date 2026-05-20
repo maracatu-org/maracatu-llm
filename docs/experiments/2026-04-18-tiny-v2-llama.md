@@ -1,27 +1,27 @@
 # tiny-v2-llama (2026-04-18)
 
 **Git revision:** `766b9366195537d155c259e14893328356012e12`
-**Config:** [`configs/maracatu_tiny.yaml`](../../configs/maracatu_tiny.yaml) (versão Llama-like)
+**Config:** [`configs/maracatu_tiny.yaml`](../../configs/maracatu_tiny.yaml) (Llama-like version)
 **Hardware:** MacBook Pro M2 Pro, 16 GB RAM, MPS backend
-**Objetivo:** Validar a migração para arquitetura Llama-style (RMSNorm + RoPE + SwiGLU) e comparar com o baseline GPT-2-like ([tiny-v1-gpt2](2026-04-18-tiny-v1-gpt2.md)) na mesma ordem de parâmetros e compute.
+**Goal:** Validate the migration to a Llama-style architecture (RMSNorm + RoPE + SwiGLU) and compare it against the GPT-2-like baseline ([tiny-v1-gpt2](2026-04-18-tiny-v1-gpt2.md)) at the same parameter and compute order.
 
 ## Setup
 
-- **Arquitetura:** Llama-like: RMSNorm (sem mean-centering, sem bias), RoPE (convenção HF "rotate-half"), SwiGLU MLP (`down(silu(gate) * up)`), weight tying, `bias=False` em tudo, suporte a GQA (aqui `num_key_value_heads = num_attention_heads`, sem GQA ainda).
-- **Compatibilidade:** state_dict alinhado ao `LlamaForCausalLM` do HuggingFace; os pesos carregam direto via `AutoModelForCausalLM.from_pretrained` sem conversão.
-- **Params:** 7.31M total / 3.21M não-embedding.
-- **Dataset:** `wikimedia/wikipedia` config `20231101.pt` (CC BY-SA 4.0). 979.492 artigos, ~593M tokens no split de treino + 6M no split de val (mesmos `tokens.npy` do v1).
-- **Tokenizer:** SentencePiece BPE 16k, sem mudanças em relação ao v1.
+- **Architecture:** Llama-like: RMSNorm (no mean-centering, no bias), RoPE (HF "rotate-half" convention), SwiGLU MLP (`down(silu(gate) * up)`), weight tying, `bias=False` everywhere, GQA support (here `num_key_value_heads = num_attention_heads`, so no GQA yet).
+- **Compatibility:** state_dict aligned with Hugging Face's `LlamaForCausalLM`; weights load directly via `AutoModelForCausalLM.from_pretrained` without conversion.
+- **Params:** 7.31M total / 3.21M non-embedding.
+- **Dataset:** `wikimedia/wikipedia` config `20231101.pt` (CC BY-SA 4.0). 979,492 articles, ~593M tokens in the training split + 6M in the val split (same `tokens.npy` as v1).
+- **Tokenizer:** SentencePiece BPE 16k, no changes from v1.
 
-## Hiperparâmetros relevantes
+## Relevant hyperparameters
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `hidden_size` | 256 |
 | `num_hidden_layers` | 4 |
 | `num_attention_heads` | 4 |
 | `num_key_value_heads` | 4 |
-| `intermediate_size` | 704 (~2.67× `hidden_size`, compensa SwiGLU ter 3 projeções) |
+| `intermediate_size` | 704 (~2.67× `hidden_size`, compensates for SwiGLU having 3 projections) |
 | `max_position_embeddings` | 256 |
 | `rms_norm_eps` | 1e-5 |
 | `rope_theta` | 10000 |
@@ -29,12 +29,12 @@
 | `tie_word_embeddings` | true |
 | `batch_size` | 32 |
 | `learning_rate` | 5e-4 (warmup 200, cosine → 5e-5) |
-| `max_iters` | 5.000 |
+| `max_iters` | 5,000 |
 | `warmup_iters` | 200 |
 
-## Resultados
+## Results
 
-### Curva de loss (evals a cada 250 steps)
+### Loss curve (evals every 250 steps)
 
 | step | train | val |
 |---|---|---|
@@ -56,14 +56,14 @@
 | 4500 | 6.600 | 6.671 |
 | 4750 | 6.579 | 6.679 |
 
-### Métricas finais
+### Final metrics
 
-- **Best val loss:** `6.6408` (step 3500) → perplexidade ≈ 766
-- **Tempo total:** 18.5 min
-- **Throughput médio:** ~36.600 tok/s no MPS
-- **Tokens de treino processados:** ~40M de 593M disponíveis (7%, sub-treinado)
+- **Best val loss:** `6.6408` (step 3500) → perplexity ≈ 766
+- **Total time:** 18.5 min
+- **Average throughput:** ~36,600 tok/s on MPS
+- **Training tokens processed:** ~40M out of 593M available (7%, undertrained)
 
-## Amostras qualitativas
+## Qualitative samples
 
 `temperature=0.8`, `top_k=50`, `seed=42`.
 
@@ -89,33 +89,33 @@ a capital de pernambuco é a primeira e possui a maior população da região da
 são pedro. a população de 57,00 km2, de 81 km2 e sua 0,0 km2, de acordo com o censo de
 ```
 
-## Análise
+## Analysis
 
-**Comparação com v1 (GPT-2-like):**
+**Comparison with v1 (GPT-2-like):**
 
-| Métrica | v1 (GPT-2) | v2 (Llama) | Δ |
+| Metric | v1 (GPT-2) | v2 (Llama) | Δ |
 |---|---|---|---|
 | Best val loss | 6.7514 | **6.6408** | -0.1106 (-1.6%) |
-| Tempo | 14.7 min | 18.5 min | +26% |
+| Time | 14.7 min | 18.5 min | +26% |
 | Throughput | 46k tok/s | 36k tok/s | -22% |
-| Params (não-emb) | 3.2M | 3.2M | igual |
+| Params (non-emb) | 3.2M | 3.2M | equal |
 
-**Interpretação:**
-- Melhoria modesta mas real em val loss no mesmo orçamento de steps, com arch com mais operações por passo. Coerente com a teoria: RoPE + SwiGLU rendem mais em treinos longos; em 5k iters (sub-treinado), o efeito composto mal começou.
-- Queda de throughput esperada: SwiGLU tem 3 projeções lineares vs 2 de uma FFN GELU; RoPE adiciona ops por head; RMSNorm ganha um pouco mas não compensa o resto.
+**Interpretation:**
+- Modest but real improvement in val loss at the same step budget, with an arch that does more ops per pass. Consistent with theory: RoPE + SwiGLU pay off more in longer runs; at 5k iters (undertrained) the compounded effect has barely started.
+- Throughput drop is expected: SwiGLU has 3 linear projections vs 2 for a GELU FFN; RoPE adds ops per head; RMSNorm wins a little but doesn't offset the rest.
 
-**Qualitativo:** o salto mais visível foi no prompt `"A capital de Pernambuco é"`:
-- v1: fugiu para "banda ganhou o show", completamente fora de contexto
-- v2: ficou em contexto geográfico: "possui a maior população da região da antiga cidade", "km2", "censo"
+**Qualitative:** the most visible jump was on the prompt `"A capital de Pernambuco é"`:
+- v1: drifted into "band gave a show", totally out of context
+- v2: stayed in geographic context: "has the largest population of the region of the old city", "km2", "census"
 
-Ainda erra o fato (Recife), mas o modelo entendeu que "capital de X" é um construct geográfico. Indicativo de que RoPE pode estar ajudando com relação de dependência longa dentro do contexto.
+Still wrong on the fact (Recife), but the model understood that "capital of X" is a geographic construct. Suggestive that RoPE may be helping with long-range dependency relations within the context.
 
-**Sinais bons:**
-- Loss caiu de 9.68 → 6.64 (melhor que o v1)
-- Gap train/val pequeno (~0.06), sem overfitting
-- Best val no step 3500, não 4750: cosine decay já estava apertando, e o modelo continuou melhorando no train mas não no val, leve sinal de teto pra esse budget
+**Good signs:**
+- Loss dropped from 9.68 → 6.64 (better than v1)
+- Small train/val gap (~0.06), no overfitting
+- Best val at step 3500, not 4750: cosine decay was already tightening, and the model kept improving on train but not on val, a slight ceiling signal for this budget
 
-**Próximos passos validados por este experimento:**
-1. Arch nova funciona: seguir com ela no 20M
-2. O gap de -1.6% em 5k iters pode compor pra -5 a -10% em 50k iters (especulativo)
-3. Partir pro 20M sem novas mudanças arquiteturais
+**Next steps validated by this experiment:**
+1. The new arch works: keep using it for the 20M
+2. The -1.6% gap at 5k iters may compound to -5 to -10% at 50k iters (speculative)
+3. Move on to the 20M with no new architectural changes

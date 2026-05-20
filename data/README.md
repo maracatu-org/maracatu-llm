@@ -1,32 +1,32 @@
-# Dados de treino do Maracatu
+# Maracatu training data
 
-Este diretório contém o corpus usado para treinar o Maracatu. Por serem arquivos grandes, os dados não são versionados no Git. Use os scripts em `scripts/` para baixá-los e processá-los.
+This directory contains the corpus used to train Maracatu. Because the files are large, the data is not versioned in Git. Use the scripts in `scripts/` to download and process it.
 
-## Estrutura
+## Structure
 
 ```
 data/
-├── raw/         # Dumps originais (ignorado pelo Git)
-└── processed/   # Corpus limpo e pronto para tokenização (ignorado pelo Git)
+├── raw/         # Original dumps (gitignored)
+└── processed/   # Cleaned corpus, ready for tokenization (gitignored)
 ```
 
-## Fontes e licenças
+## Sources and licenses
 
-Todas as fontes abaixo têm licenças compatíveis com uso em treinamento de modelos e redistribuição dos pesos resultantes.
+All sources below have licenses compatible with use in model training and with redistribution of the resulting weights.
 
-### 1. Wikipedia em Português
+### 1. Portuguese Wikipedia
 
-- **Licença**: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
-- **Fonte**: dataset `wikimedia/wikipedia` no HuggingFace (https://huggingface.co/datasets/wikimedia/wikipedia), config `20231101.pt`
-- **Tamanho aproximado**: ~1-2 GB de texto já extraído
-- **Cache local**: `~/.cache/huggingface/datasets/` (não versionado)
-- **Atribuição**: Os textos são de autoria da comunidade Wikipedia e seus colaboradores
+- **License**: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
+- **Source**: `wikimedia/wikipedia` dataset on Hugging Face (https://huggingface.co/datasets/wikimedia/wikipedia), config `20231101.pt`
+- **Approximate size**: ~1-2 GB of already-extracted text
+- **Local cache**: `~/.cache/huggingface/datasets/` (not versioned)
+- **Attribution**: Texts are authored by the Wikipedia community and its contributors
 
-### 2. Projeto Gutenberg: obras em domínio público brasileiro
+### 2. Project Gutenberg: works in the Brazilian public domain
 
-- **Licença**: Domínio público
-- **Fonte**: https://www.gutenberg.org/
-- **Autores incluídos** (exemplos):
+- **License**: Public domain
+- **Source**: https://www.gutenberg.org/
+- **Authors included** (examples):
   - Machado de Assis (1839-1908)
   - José de Alencar (1829-1877)
   - Aluísio Azevedo (1857-1913)
@@ -34,82 +34,82 @@ Todas as fontes abaixo têm licenças compatíveis com uso em treinamento de mod
   - Euclides da Cunha (1866-1909)
   - Gonçalves Dias (1823-1864)
 
-## Fontes e licenças (corpus v2)
+## Sources and licenses (corpus v2)
 
-O corpus v2 expande para três fontes, todas com licenças compatíveis com Apache 2.0 e com redistribuição dos pesos do modelo. É produzido por `scripts/build_corpus_v2.py`. Alvo: ~1.7B tokens (Chinchilla-ótimo para o Maracatu-80M).
+Corpus v2 expands to three sources, all with licenses compatible with Apache 2.0 and with redistribution of the model weights. It is produced by `scripts/build_corpus_v2.py`. Target: ~1.7B tokens (Chinchilla-optimal for Maracatu-80M).
 
-### 1. Wikipedia PT (mantida do v1)
+### 1. Wikipedia PT (kept from v1)
 
-- **Licença**: CC BY-SA 3.0
-- **Fonte HF**: `wikimedia/wikipedia`, config `20231101.pt`
-- **Tokens estimados**: ~550M
+- **License**: CC BY-SA 3.0
+- **HF source**: `wikimedia/wikipedia`, config `20231101.pt`
+- **Estimated tokens**: ~550M
 
 ### 2. Project Gutenberg PT
 
-- **Licença**: Domínio Público
-- **Fonte**: https://www.gutenberg.org/
-- **Critério de inclusão**: autores falecidos há mais de 70 anos (critério BR e internacional)
-- **Autores incluídos**: Machado de Assis, José de Alencar, Aluísio Azevedo, Euclides da Cunha, Castro Alves, Álvares de Azevedo, Casimiro de Abreu, Eça de Queirós, Graciliano Ramos, Lima Barreto, Monteiro Lobato, Olavo Bilac, Gonçalves Dias, Raul Pompeia, Visconde de Taunay
-- **Tokens estimados**: ~150M
-- **Rate limit**: 1 req/s para não sobrecarregar o servidor
+- **License**: Public Domain
+- **Source**: https://www.gutenberg.org/
+- **Inclusion criterion**: authors deceased for more than 70 years (Brazilian and international criterion)
+- **Authors included**: Machado de Assis, José de Alencar, Aluísio Azevedo, Euclides da Cunha, Castro Alves, Álvares de Azevedo, Casimiro de Abreu, Eça de Queirós, Graciliano Ramos, Lima Barreto, Monteiro Lobato, Olavo Bilac, Gonçalves Dias, Raul Pompeia, Visconde de Taunay
+- **Estimated tokens**: ~150M
+- **Rate limit**: 1 req/s to avoid overloading the server
 
 ### 3. CulturaX PT
 
-- **Licença**: ODC-BY 1.0 (Open Data Commons Attribution License)
-- **Fonte HF**: `uonlp/CulturaX`, subset `pt`, https://huggingface.co/datasets/uonlp/CulturaX
-- **Ingestão**: streaming (dataset completo tem dezenas de GB)
-- **Tokens estimados**: ~1B após filtragem
+- **License**: ODC-BY 1.0 (Open Data Commons Attribution License)
+- **HF source**: `uonlp/CulturaX`, subset `pt`, https://huggingface.co/datasets/uonlp/CulturaX
+- **Ingestion**: streaming (full dataset is tens of GB)
+- **Estimated tokens**: ~1B after filtering
 
-**Atribuição obrigatória (ODC-BY)**: este corpus inclui dados do CulturaX (Nguyen et al., 2023), disponível em https://huggingface.co/datasets/uonlp/CulturaX, sob licença ODC-BY 1.0.
+**Mandatory attribution (ODC-BY)**: this corpus includes data from CulturaX (Nguyen et al., 2023), available at https://huggingface.co/datasets/uonlp/CulturaX, under ODC-BY 1.0 license.
 
-### Pipeline de filtros (v2)
+### Filter pipeline (v2)
 
-Aplicados em cadeia por documento:
+Applied per document in sequence:
 
-1. `min_doc_chars=200`: descarta documentos muito curtos
-2. Heurística de idioma: proporção mínima de stopwords PT (ratio >= 0.05)
-3. MinHash LSH (Jaccard >= 0.85, 128 permutações): deduplicação fuzzy entre documentos
-4. Limpeza linha a linha: `min_line_chars=30` + remoção de linhas só-símbolos
-5. PII regex: descarta linhas com CPF, email, telefone BR, CEP, padrão de endereço
-6. SHA-1 exata por linha: deduplicação exata compartilhada entre todas as fontes
+1. `min_doc_chars=200`: drops very short documents
+2. Language heuristic: minimum proportion of PT stopwords (ratio >= 0.05)
+3. MinHash LSH (Jaccard >= 0.85, 128 permutations): fuzzy deduplication across documents
+4. Line-by-line cleanup: `min_line_chars=30` + removal of symbol-only lines
+5. PII regex: drops lines with CPF, email, BR phone, CEP, address pattern
+6. Exact SHA-1 per line: exact deduplication shared across all sources
 
-### Reprodutibilidade (v2)
+### Reproducibility (v2)
 
 ```bash
-# Corpus completo v2 (demora horas, requer ~50GB em disco)
+# Full corpus v2 (takes hours, requires ~50GB on disk)
 caffeinate -is python -u scripts/build_corpus_v2.py --source all
 
-# Smoke test (1.000 docs por fonte, poucos minutos, valida pipeline)
+# Smoke test (1,000 docs per source, a few minutes, validates the pipeline)
 python -u scripts/build_corpus_v2.py --smoke-test
 
-# Apenas Wikipedia (equivalente ao corpus v1 com filtros v2)
+# Wikipedia only (equivalent to corpus v1 with v2 filters)
 python -u scripts/build_corpus_v2.py --source wikipedia
 ```
 
-Registra em `data/processed/MANIFEST_v2.txt` o SHA-256 do corpus, todos os parâmetros de filtro e estatísticas por fonte. Duas execuções com mesmos parâmetros e mesmas versões dos datasets HF produzem SHA-256 idêntico.
+Records in `data/processed/MANIFEST_v2.txt` the SHA-256 of the corpus, all filter parameters and per-source statistics. Two runs with the same parameters and the same HF dataset versions produce an identical SHA-256.
 
-## O que NÃO está incluído (e por quê)
+## What is NOT included (and why)
 
-As fontes abaixo são comumente usadas em pesquisa de LLMs, mas foram deliberadamente excluídas por cautela:
+The sources below are commonly used in LLM research, but were deliberately excluded out of caution:
 
-- **Corpus Carolina (USP)**: CC BY-NC-4.0. A cláusula "não comercial" é incompatível com Apache 2.0 e com planos futuros de comercialização. Reativar somente se o escopo mudar para pesquisa sem fins comerciais, mediante confirmação legal.
-- **OSCAR / Common Crawl (pt) bruto**: dumps da web aberta que podem conter conteúdo com copyright ativo. Uso indireto via CulturaX-PT (já filtrado academicamente).
-- **BrWaC**: corpus acadêmico brasileiro, uso permitido para pesquisa mas redistribuição nos pesos requer formalização.
-- **Livros com copyright ativo**: nunca. Independente de disponibilidade.
-- **Conteúdo de redes sociais**: questões de privacidade (PII), copyright de usuários e ToS das plataformas.
+- **Corpus Carolina (USP)**: CC BY-NC-4.0. The "non-commercial" clause is incompatible with Apache 2.0 and with future commercialization plans. Re-enable only if the scope changes to non-commercial research, after legal confirmation.
+- **OSCAR / Common Crawl (pt) raw**: open web dumps that may contain content with active copyright. Indirect use via CulturaX-PT (already academically filtered).
+- **BrWaC**: Brazilian academic corpus, use permitted for research but redistribution in the weights requires formalization.
+- **Books with active copyright**: never. Regardless of availability.
+- **Social media content**: privacy issues (PII), user copyright, and platform ToS.
 
-## Estatísticas do corpus (serão preenchidas após processamento)
+## Corpus statistics (to be filled in after processing)
 
-- Tokens totais: TBD
-- Documentos: TBD
-- Vocabulário: 16.000 (BPE via SentencePiece)
+- Total tokens: TBD
+- Documents: TBD
+- Vocabulary: 16,000 (BPE via SentencePiece)
 
-## Reprodutibilidade
+## Reproducibility
 
-Para reproduzir exatamente o corpus usado no treino:
+To reproduce exactly the corpus used in training:
 
 ```bash
 python scripts/clean_corpus.py
 ```
 
-O script baixa o dataset via HuggingFace (versão fixa `20231101.pt` por padrão) e registra em `data/processed/MANIFEST.txt` a fonte exata, os parâmetros de filtro usados e as estatísticas do corpus resultante.
+The script downloads the dataset via Hugging Face (pinned version `20231101.pt` by default) and records in `data/processed/MANIFEST.txt` the exact source, the filter parameters used and the statistics of the resulting corpus.

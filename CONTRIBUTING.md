@@ -1,29 +1,29 @@
-# Contribuindo com o Maracatu
+# Contributing to Maracatu
 
-Obrigado pelo interesse em contribuir! Maracatu é um esforço open source de criação de LLMs brasileiros, com pesos abertos sob Apache 2.0. O escopo é amplo — código, corpus, eval, infraestrutura de treino, documentação, relatos de bugs. Toda forma de ajuda conta.
+Thanks for your interest in contributing! Maracatu is an open source effort to build Brazilian LLMs, with open weights under Apache 2.0. The scope is broad — code, corpus, eval, training infrastructure, documentation, bug reports. Every form of help counts.
 
-## Antes de começar
+## Before you start
 
-- Leia o [Código de Conduta](CODE_OF_CONDUCT.md).
-- Encontrou uma vulnerabilidade ou problema sério de modelo (ex: vazamento de dados de treino, geração de conteúdo perigoso)? Não abra issue pública. Siga o [SECURITY.md](SECURITY.md).
-- Para mudanças grandes (refatoração de modelo, troca de arquitetura, novo corpus), abra uma issue antes para discutir a abordagem.
+- Read the [Code of Conduct](CODE_OF_CONDUCT.md).
+- Found a vulnerability or serious model issue (e.g. training data leakage, dangerous content generation)? Don't open a public issue. Follow [SECURITY.md](SECURITY.md).
+- For large changes (model refactor, architecture swap, new corpus), open an issue first to discuss the approach.
 
-## Áreas onde contribuições fazem diferença
+## Areas where contributions matter most
 
-| Área | Exemplos |
+| Area | Examples |
 |------|----------|
-| **Modelo** | Otimizações de eficiência, novos componentes (atenção, normalização), reduções de footprint |
-| **Corpus** | Fontes em PT-BR com licença compatível, filtros de qualidade, deduplicação |
-| **Tokenizer** | Experimentos de vocabulário, análise de cobertura, BPE vs Unigram |
-| **Treino** | Estabilidade, schedules de learning rate, mixed precision, gradient accumulation |
-| **Eval** | Novos benchmarks PT-BR (ENEM, OAB, BLUEX, POSCOMP, Revalida), tasks customizadas |
-| **Deploy** | Quantização, exportação (GGUF, ONNX), embeddings, inferência otimizada |
-| **Docs** | Documentação técnica, guias, exemplos de uso |
-| **Hardware** | Relatos de treino em diferentes GPUs (T4, A100, H100, MPS), benchmarks de throughput |
+| **Model** | Efficiency optimizations, new components (attention, normalization), footprint reductions |
+| **Corpus** | PT-BR sources with compatible licensing, quality filters, deduplication |
+| **Tokenizer** | Vocabulary experiments, coverage analysis, BPE vs Unigram |
+| **Training** | Stability, learning rate schedules, mixed precision, gradient accumulation |
+| **Eval** | New PT-BR benchmarks (ENEM, OAB, BLUEX, POSCOMP, Revalida), custom tasks |
+| **Deploy** | Quantization, export (GGUF, ONNX), embeddings, optimized inference |
+| **Docs** | Technical documentation, guides, usage examples |
+| **Hardware** | Training reports on different GPUs (T4, A100, H100, MPS), throughput benchmarks |
 
-## Como rodar localmente
+## Running locally
 
-Requer Python 3.11+ e PyTorch 2.2+.
+Requires Python 3.11+ and PyTorch 2.2+.
 
 ```bash
 git clone git@github.com:maracatu-labs/maracatu.git
@@ -34,17 +34,17 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-Para treinar em GPU na nuvem (Kaggle T4, Modal, RunPod): ver [`docs/kaggle.md`](docs/kaggle.md) e [`docs/runpod.md`](docs/runpod.md).
+To train on cloud GPUs (Kaggle T4, Modal, RunPod): see [`docs/kaggle.md`](docs/kaggle.md) and [`docs/runpod.md`](docs/runpod.md).
 
-## Fluxo de PR
+## PR workflow
 
-1. Faça fork do repositório.
-2. Crie um branch a partir de `main` com nome descritivo (`feat/...`, `fix/...`, `docs/...`, `data/...`, `eval/...`).
-3. Faça seus commits seguindo a [convenção abaixo](#commit-messages).
-4. Se introduziu código novo, adicione testes em `tests/` quando aplicável.
-5. Se mexeu em modelo/treino, documente o experimento em `docs/experiments/`.
-6. Abra o PR descrevendo o problema, a solução e como testar.
-7. Aguarde revisão. Toda contribuição passa por code review.
+1. Fork the repository.
+2. Create a branch from `main` with a descriptive name (`feat/...`, `fix/...`, `docs/...`, `data/...`, `eval/...`).
+3. Make your commits following the [convention below](#commit-messages).
+4. If you introduced new code, add tests in `tests/` where applicable.
+5. If you touched model/training, document the experiment in `docs/experiments/`.
+6. Open the PR describing the problem, the solution, and how to test.
+7. Wait for review. Every contribution goes through code review.
 
 ## Commit messages
 
@@ -67,47 +67,47 @@ We use **squash merge** — your PR title and description will end up as the sin
 
 **Don't include automatic `Co-Authored-By:` trailers** (from AI tools, for example). Add co-authorship only when another person actually collaborated on the commit.
 
-Identifiers in code (variables, functions, classes) are in English. User-facing content (README, this guide, error messages aimed at Portuguese-speaking contributors) stays in Brazilian Portuguese.
+Identifiers in code (variables, functions, classes) are in English. OSS documentation (README, this guide, code of conduct, security policy, issue/PR templates) is in English. Any user-facing strings produced by the trained model itself remain in Brazilian Portuguese — the model targets PT-BR by design.
 
-## Convenções de código
+## Code conventions
 
 ### Python
 
-- Use `ruff` para lint (configurado em `pyproject.toml`).
-- Type hints quando o tipo não é óbvio.
-- Sem comentários em código além de docstrings — nomes claros valem mais.
-- Configs de hiperparâmetros em YAML (`configs/`), não hardcoded.
-- Experimentos novos: documentar em `docs/experiments/AAAA-MM-DD-nome.md` (template em `docs/experiments/_TEMPLATE.md`).
+- Use `ruff` for lint (configured in `pyproject.toml`).
+- Type hints when the type isn't obvious.
+- No comments in code beyond docstrings — clear names matter more.
+- Hyperparameter configs in YAML (`configs/`), not hardcoded.
+- New experiments: document in `docs/experiments/YYYY-MM-DD-name.md` (template in `docs/experiments/_TEMPLATE.md`).
 
-### Modelo
+### Model
 
-- State dict alinhado com `LlamaForCausalLM` do Hugging Face — não quebre essa compatibilidade sem discutir antes.
-- Componentes modernos: RMSNorm, RoPE, SwiGLU, sem bias em `nn.Linear`, weight tying.
+- State dict aligned with Hugging Face's `LlamaForCausalLM` — don't break this compatibility without discussing first.
+- Modern components: RMSNorm, RoPE, SwiGLU, no bias in `nn.Linear`, weight tying.
 
 ### Corpus
 
-- Apenas fontes com licença compatível com Apache 2.0 (CC BY-SA, CC0, domínio público).
-- Script de preparação reprodutível em `scripts/`.
-- Documentar fonte, licença e processamento em `data/README.md`.
+- Only sources with licenses compatible with Apache 2.0 (CC BY-SA, CC0, public domain).
+- Reproducible preparation script in `scripts/`.
+- Document source, license, and processing in `data/README.md`.
 
-## Adicionando um novo benchmark
+## Adding a new benchmark
 
-1. Adicione a task em `scripts/eval/tasks/<nome>/` no formato `lm-evaluation-harness`.
-2. Documente a task: o que avalia, formato dos prompts, métricas.
-3. Inclua no script `scripts/eval/run_benchmarks.sh`.
-4. Reporte os resultados num PR ou em `docs/experiments/`.
+1. Add the task in `scripts/eval/tasks/<name>/` in `lm-evaluation-harness` format.
+2. Document the task: what it evaluates, prompt format, metrics.
+3. Include it in the `scripts/eval/run_benchmarks.sh` script.
+4. Report results in a PR or in `docs/experiments/`.
 
-## Reportando bugs
+## Reporting bugs
 
-Use o template de issue. Inclua:
-- Versão do Python, PyTorch, CUDA (se aplicável)
+Use the issue template. Include:
+- Python, PyTorch, CUDA versions (if applicable)
 - Hardware (GPU, RAM, etc.)
-- Passos para reproduzir
-- O que esperava vs. o que aconteceu
-- Logs relevantes
+- Steps to reproduce
+- What you expected vs. what happened
+- Relevant logs
 
-Para bugs de treino, anexe o YAML de config + logs do run.
+For training bugs, attach the config YAML + run logs.
 
-## Dúvidas
+## Questions
 
-Abra uma issue marcando como `question` ou inicie uma discussion no GitHub.
+Open an issue with the `question` label or start a discussion on GitHub.

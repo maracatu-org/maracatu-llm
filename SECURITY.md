@@ -1,52 +1,52 @@
-# Política de Segurança
+# Security Policy
 
-O Maracatu é um projeto de pesquisa em LLMs com pesos abertos. Levamos a sério tanto a segurança do código quanto questões de risco do modelo (privacidade, viés, geração de conteúdo perigoso). Obrigado por nos ajudar a manter o projeto seguro e responsável.
+Maracatu is an open-weight LLM research project. We take both code security and model risk concerns (privacy, bias, dangerous content generation) seriously. Thank you for helping us keep the project safe and responsible.
 
-## Reportando uma vulnerabilidade ou problema de modelo
+## Reporting a vulnerability or model issue
 
-**Não abra issues públicas para vulnerabilidades.** Em vez disso:
+**Do not open public issues for vulnerabilities.** Instead:
 
-- Use [GitHub Security Advisories](https://github.com/maracatu-labs/maracatu/security/advisories/new) (preferencial — privado por padrão), **ou**
-- Envie e-mail para **contact@maracatu.org** com:
-  - Descrição do problema
-  - Passos para reproduzir
-  - Impacto potencial
-  - Sugestão de mitigação, se tiver
+- Use [GitHub Security Advisories](https://github.com/maracatu-labs/maracatu/security/advisories/new) (preferred — private by default), **or**
+- Send an email to **contact@maracatu.org** with:
+  - Description of the issue
+  - Steps to reproduce
+  - Potential impact
+  - Suggested mitigation, if you have one
 
-Vamos confirmar o recebimento em até 72 horas e trabalhar com você para entender e corrigir o problema. Após a correção ser publicada, podemos creditar você na nota de lançamento (se desejar).
+We will confirm receipt within 72 hours and work with you to understand and fix the issue. After the fix is published, we may credit you in the release note (if you wish).
 
-## Escopo
+## Scope
 
-### Código (segurança tradicional)
+### Code (traditional security)
 
-- Pipeline de treino (`src/maracatu/`)
-- Scripts de preparação de corpus e deploy (`scripts/`)
-- Configurações (`configs/`)
+- Training pipeline (`src/maracatu/`)
+- Corpus preparation and deploy scripts (`scripts/`)
+- Configs (`configs/`)
 - Tokenizer (`tokenizer/`)
 
-Exemplos: injeção de código via input não sanitizado, deserialização insegura de checkpoints, leakage de credenciais em logs.
+Examples: code injection via unsanitized input, unsafe checkpoint deserialization, credential leakage in logs.
 
-### Modelo (segurança responsável)
+### Model (responsible safety)
 
-- Geração de conteúdo claramente perigoso (instruções para violência, autoharm, etc.)
-- Vazamento detectável de dados do corpus de treino (memorização)
-- Viés sistemático grave (racismo, sexismo, conteúdo extremista) que escapa do baseline esperado de um modelo pré-treinado sem instruction tuning
+- Generation of clearly dangerous content (instructions for violence, self-harm, etc.)
+- Detectable leakage of training corpus data (memorization)
+- Severe systematic bias (racism, sexism, extremist content) that exceeds the expected baseline of a pretrained model without instruction tuning
 
-**Importante:** Maracatu é um modelo base (sem RLHF / instruction tuning até o 800M). Comportamentos típicos de modelo base — repetição, geração inconsistente, ausência de filtros — não são vulnerabilidades. Documentamos esse escopo no [MODEL_CARD.md](MODEL_CARD.md).
+**Important:** Maracatu is a base model (no RLHF / instruction tuning until the 800M release). Behaviors typical of a base model — repetition, inconsistent generation, lack of filters — are not vulnerabilities. We document this scope in [MODEL_CARD.md](MODEL_CARD.md).
 
-### Fora de escopo
+### Out of scope
 
-- Vulnerabilidades em dependências de terceiros (PyTorch, transformers, datasets) — reporte ao mantenedor original primeiro. Avise-nos se afetar o Maracatu diretamente.
-- Saídas inesperadas que ficam dentro do comportamento esperado de um modelo base PT-BR.
-- Ataques que dependem de acesso físico ou social engineering contra contribuidores específicos.
+- Vulnerabilities in third-party dependencies (PyTorch, transformers, datasets) — report to the original maintainer first. Let us know if it affects Maracatu directly.
+- Unexpected outputs that fall within the expected behavior of a PT-BR base model.
+- Attacks that rely on physical access or social engineering against specific contributors.
 
-## Boas práticas para quem usa os pesos
+## Best practices for users of the weights
 
-- **Não use Maracatu em produção crítica sem fine-tuning e safety layer apropriados.** Os modelos publicados são pré-treinados (base models), sem alinhamento.
-- Audite saídas antes de exibi-las a usuários finais.
-- Considere quantização e inferência local para reduzir superfície de ataque (vazamento de inputs sensíveis para APIs externas).
-- Para uso comercial, leia a [Apache 2.0](LICENSE) — você pode, mas é responsável pelo uso.
+- **Do not use Maracatu in critical production without appropriate fine-tuning and a safety layer.** The released models are pretrained (base models), without alignment.
+- Audit outputs before exposing them to end users.
+- Consider quantization and local inference to reduce attack surface (leakage of sensitive inputs to external APIs).
+- For commercial use, read the [Apache 2.0](LICENSE) — you can, but you are responsible for the use.
 
-## Histórico de avisos
+## Advisory history
 
-Quando publicarmos um aviso de segurança, ele aparecerá em [GitHub Security Advisories](https://github.com/maracatu-labs/maracatu/security/advisories).
+When we publish a security advisory, it will appear under [GitHub Security Advisories](https://github.com/maracatu-labs/maracatu/security/advisories).

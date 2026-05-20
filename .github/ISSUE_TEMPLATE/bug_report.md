@@ -1,59 +1,59 @@
 ---
-name: Reportar bug
-about: Algo não está funcionando como esperado (treino, geração, scripts)
+name: Report bug
+about: Something isn't working as expected (training, generation, scripts)
 title: "[bug] "
 labels: bug
 assignees: ''
 ---
 
-## Descrição
+## Description
 
-<!-- Descreva o que está acontecendo. -->
+<!-- Describe what's happening. -->
 
-## Como reproduzir
+## How to reproduce
 
 1. ...
 2. ...
 3. ...
 
-## Comportamento esperado
+## Expected behavior
 
-<!-- O que você esperava que acontecesse? -->
+<!-- What did you expect to happen? -->
 
-## Comportamento atual
+## Current behavior
 
-<!-- O que está acontecendo no lugar? -->
+<!-- What's happening instead? -->
 
-## Ambiente
+## Environment
 
-- SO:
-- Versão do Python:
-- Versão do PyTorch:
-- Versão do CUDA (se aplicável):
-- GPU (modelo, VRAM):
+- OS:
+- Python version:
+- PyTorch version:
+- CUDA version (if applicable):
+- GPU (model, VRAM):
 - Commit / branch:
-- Modelo (Maracatu-20M / 80M / config customizada):
+- Model (Maracatu-20M / 80M / custom config):
 
 ## Config / logs
 
 <details>
-<summary>Config YAML (se relevante)</summary>
+<summary>Config YAML (if relevant)</summary>
 
 ```yaml
-cole aqui o config usado
+paste the config used here
 ```
 
 </details>
 
 <details>
-<summary>Logs relevantes</summary>
+<summary>Relevant logs</summary>
 
 ```
-cole aqui o stack trace ou logs do treino
+paste the stack trace or training logs here
 ```
 
 </details>
 
-## Contexto adicional
+## Additional context
 
-<!-- Screenshots, hipóteses, qualquer coisa que ajude. -->
+<!-- Screenshots, hypotheses, anything that helps. -->

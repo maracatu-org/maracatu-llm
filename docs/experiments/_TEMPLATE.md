@@ -1,20 +1,20 @@
-# <!-- nome do run --> (<!-- YYYY-MM-DD -->)
+# <!-- run name --> (<!-- YYYY-MM-DD -->)
 
 **Git revision:** `<hash>`
-**Config:** [`configs/<arquivo>.yaml`](../../configs/<arquivo>.yaml)
+**Config:** [`configs/<file>.yaml`](../../configs/<file>.yaml)
 **Hardware:** <!-- M2 Pro MPS / T4 Kaggle / 4090 RunPod -->
-**Objetivo:** <!-- 1-2 frases -->
+**Goal:** <!-- 1-2 sentences -->
 
 ## Setup
 
-- **Arquitetura:** <!-- Llama-like / GPT-2-like, principais ingredientes -->
-- **Params:** <!-- total / não-embedding -->
+- **Architecture:** <!-- Llama-like / GPT-2-like, main ingredients -->
+- **Params:** <!-- total / non-embedding -->
 - **Dataset:** <!-- wikimedia/wikipedia (20231101.pt), N tokens, SHA-256 -->
 - **Tokenizer:** <!-- SentencePiece BPE, vocab 16k -->
 
-## Hiperparâmetros relevantes
+## Relevant hyperparameters
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
 | `hidden_size` | |
 | `num_hidden_layers` | |
@@ -26,23 +26,23 @@
 | `warmup_iters` | |
 | `max_iters` | |
 
-## Resultados
+## Results
 
-### Curva de loss
+### Loss curve
 
 | step | train | val |
 |---|---|---|
 
-### Métricas finais
+### Final metrics
 
 - **Best val loss:** `X.XXXX` (step N)
 - **Final train loss:** `X.XXXX`
-- **Tempo total:** `XX.X min`
-- **Throughput médio:** `XXk tok/s`
+- **Total time:** `XX.X min`
+- **Average throughput:** `XXk tok/s`
 
-## Amostras qualitativas
+## Qualitative samples
 
-Com `temperature=0.8`, `top_k=50`, `seed=42`.
+With `temperature=0.8`, `top_k=50`, `seed=42`.
 
 ### Prompt: `"O Brasil é"`
 
@@ -62,6 +62,6 @@ Com `temperature=0.8`, `top_k=50`, `seed=42`.
 ...
 ```
 
-## Análise
+## Analysis
 
-<!-- O que funcionou, o que não, hipóteses, próximos passos -->
+<!-- What worked, what didn't, hypotheses, next steps -->

@@ -1,25 +1,25 @@
 # Experiment log
 
-Registro cronológico de todos os treinos do Maracatu. Cada experimento é um arquivo Markdown com data, commit, configuração, métricas, amostras qualitativas e análise.
+Chronological record of every Maracatu training run. Each experiment is a Markdown file with date, commit, configuration, metrics, qualitative samples and analysis.
 
-**Convenção de nome:** `YYYY-MM-DD-<runname>.md`
+**Naming convention:** `YYYY-MM-DD-<runname>.md`
 
-## Motivação
+## Motivation
 
-Treinos de LLM são difíceis de comparar ao longo do tempo sem notas estruturadas. Este log serve para:
+LLM training runs are hard to compare over time without structured notes. This log serves to:
 
-1. **Reprodutibilidade**: dado o git rev e a config, reproduzir o resultado
-2. **Comparação**: avaliar se uma mudança arquitetural/hiperparâmetro melhorou algo
-3. **Aprendizado**: documentar o que funcionou, o que não funcionou e por quê
+1. **Reproducibility**: given the git rev and the config, reproduce the result
+2. **Comparison**: assess whether an architecture/hyperparameter change improved anything
+3. **Learning**: document what worked, what didn't and why
 
-## Índice
+## Index
 
-| Data | Run | Arquitetura | Iters | Best val loss | Arquivo |
+| Date | Run | Architecture | Iters | Best val loss | File |
 |---|---|---|---|---|---|
-| 2026-04-18 | `maracatu-tiny-test` v1 | GPT-2-like (LayerNorm, GELU, abs pos emb) | 5.000 | 6.7514 | [tiny-v1-gpt2](2026-04-18-tiny-v1-gpt2.md) |
-| 2026-04-18 | `maracatu-tiny-test` v2 | Llama-like (RMSNorm, SwiGLU, RoPE) | 5.000 | 6.6408 | [tiny-v2-llama](2026-04-18-tiny-v2-llama.md) |
-| 2026-04-19 | `maracatu-tiny-long` | Llama-like (mesmo tiny) | 50.000 | 6.3949 | [tiny-long](2026-04-19-tiny-long.md) |
+| 2026-04-18 | `maracatu-tiny-test` v1 | GPT-2-like (LayerNorm, GELU, abs pos emb) | 5,000 | 6.7514 | [tiny-v1-gpt2](2026-04-18-tiny-v1-gpt2.md) |
+| 2026-04-18 | `maracatu-tiny-test` v2 | Llama-like (RMSNorm, SwiGLU, RoPE) | 5,000 | 6.6408 | [tiny-v2-llama](2026-04-18-tiny-v2-llama.md) |
+| 2026-04-19 | `maracatu-tiny-long` | Llama-like (same tiny) | 50,000 | 6.3949 | [tiny-long](2026-04-19-tiny-long.md) |
 
 ## Template
 
-Novo experimento: copiar [`_TEMPLATE.md`](_TEMPLATE.md) e preencher.
+New experiment: copy [`_TEMPLATE.md`](_TEMPLATE.md) and fill it in.

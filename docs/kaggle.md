@@ -1,72 +1,72 @@
-# Treinar o Maracatu no Kaggle
+# Train Maracatu on Kaggle
 
-Guia passo-a-passo para reproduzir o treino do Maracatu em um notebook Kaggle usando GPU T4 free tier. Adequado para modelos de 20M-125M parâmetros (~2-6h de treino).
+Step-by-step guide to reproduce Maracatu training in a Kaggle notebook using a free-tier T4 GPU. Suitable for models from 20M-125M parameters (~2-6h of training).
 
-## Por que Kaggle
+## Why Kaggle
 
-- **30h/semana de GPU T4 grátis** (T4 x1, ou P100, ou T4 x2 dependendo do disponível)
-- **Sessão de até 9h por run**: suficiente para nossos modelos pequenos
-- **Pago gratuito** para datasets e notebooks privados
-- **Persistência de outputs**: checkpoints ficam acessíveis por download via CLI
+- **30h/week of free T4 GPU** (T4 x1, or P100, or T4 x2 depending on availability)
+- **Up to 9h per run**: enough for our small models
+- **Free** for datasets and private notebooks
+- **Output persistence**: checkpoints stay accessible via CLI download
 
-Para modelos maiores (300M+), considerar RunPod/Lambda em GPUs A100 pagas.
+For larger models (300M+), consider RunPod/Lambda on paid A100 GPUs.
 
-## Pré-requisitos
+## Prerequisites
 
-- Conta Kaggle ativa
-- Python 3.11+ local
-- `.venv` do projeto ativado (via `uv venv && uv pip install -e ".[dev]"`)
-- Phone verification: **NÃO é necessária** para datasets/kernels (só para modelos públicos)
+- Active Kaggle account
+- Python 3.11+ locally
+- Project `.venv` activated (via `uv venv && uv pip install -e ".[dev]"`)
+- Phone verification: **not required** for datasets/kernels (only for public models)
 
-## ⚠️ Pin da versão do CLI
+## ⚠️ Pin the CLI version
 
-**IMPORTANTE:** a partir do `kaggle 1.6.0`, o CLI migrou para endpoints gRPC-style em `api.kaggle.com/v1/*.Service/*` que apresentam bugs conhecidos com contas recém-criadas: datasets sobem mas falha no passo final com "Dataset creation error: slugs and hashlink are all null".
+**IMPORTANT:** starting with `kaggle 1.6.0`, the CLI migrated to gRPC-style endpoints at `api.kaggle.com/v1/*.Service/*` that have known bugs with newly created accounts: datasets upload but fail at the final step with "Dataset creation error: slugs and hashlink are all null".
 
-**Solução:** fixar em `kaggle<1.6`. Já está no `pyproject.toml` em `[dev]`, mas se precisar manualmente:
+**Solution:** pin to `kaggle<1.6`. Already set in `pyproject.toml` under `[dev]`, but if you need to do it manually:
 
 ```bash
 uv pip install "kaggle==1.5.16"
 ```
 
-## ⚠️ Auth: três tipos de token diferentes (lição do M-80M)
+## ⚠️ Auth: three different token types (lesson from M-80M)
 
-Kaggle hoje (2026) tem **dois sistemas de credencial coexistindo**:
+Kaggle today (2026) has **two credential systems coexisting**:
 
-1. **API Token clássico** (`{"key":"<32 chars>"}`): formato hex/base32, cerca de 32 caracteres. Funciona com CLI (todas as versões) e com chamadas REST diretas (`https://www.kaggle.com/api/v1/...`). É o que o `kaggle.json` baixado em `kaggle.com/settings → "Create New Token"` contém.
-2. **Personal Access Token** (PAT, `KGAT_*`): prefixo `KGAT_`, cerca de 37 caracteres. É um token estilo OAuth gerado em outro fluxo da UI. **NÃO funciona com o CLI** (legacy ou nova). Usado por integrações novas (GitHub Actions oficiais, alguns SDKs).
-3. **OAuth/JWT** (cookies de sessão): usado pela UI web e por features novas como Kaggle Notebooks integradas. Não exposto como string copiável.
+1. **Classic API Token** (`{"key":"<32 chars>"}`): hex/base32 format, around 32 characters. Works with the CLI (all versions) and with direct REST calls (`https://www.kaggle.com/api/v1/...`). This is what the `kaggle.json` downloaded from `kaggle.com/settings → "Create New Token"` contains.
+2. **Personal Access Token** (PAT, `KGAT_*`): prefix `KGAT_`, around 37 characters. An OAuth-style token generated through a different UI flow. **Does NOT work with the CLI** (legacy or new). Used by newer integrations (official GitHub Actions, some SDKs).
+3. **OAuth/JWT** (session cookies): used by the web UI and by newer features like integrated Kaggle Notebooks. Not exposed as a copyable string.
 
-**Sintoma de token errado**: o CLI lê (`kaggle datasets list`) com sucesso, mas qualquer write (`datasets create`, `models create`) retorna `401 Unauthorized` independentemente da versão do CLI ou do endpoint.
+**Symptom of the wrong token**: the CLI reads (`kaggle datasets list`) successfully, but any write (`datasets create`, `models create`) returns `401 Unauthorized` regardless of CLI version or endpoint.
 
-**Como diferenciar visualmente**:
-- 32 chars, alfanumérico hex-like → API Token clássico → **OK pro CLI**
-- 37 chars, começa com `KGAT_` → Personal Access Token → **NÃO funciona com CLI**
+**How to tell them apart visually**:
+- 32 chars, hex-like alphanumeric → Classic API Token → **OK for the CLI**
+- 37 chars, starts with `KGAT_` → Personal Access Token → **Does NOT work with the CLI**
 
-### Fluxo correto para autenticar o CLI
+### Correct flow to authenticate the CLI
 
-1. Acessar `https://www.kaggle.com/settings` logado.
-2. Na seção **API**, clicar **"Create New Token"** (NÃO usar o botão de Personal Access Token na seção OAuth).
-3. Browser baixa `kaggle.json` para `~/Downloads/kaggle.json`. **Esse arquivo é a fonte da verdade**, não copie o token pra outros lugares.
-4. Mover/copiar para `~/.kaggle/kaggle.json` (CLI lê desse path por default) com permissões 600:
+1. Go to `https://www.kaggle.com/settings` while logged in.
+2. In the **API** section, click **"Create New Token"** (do NOT use the Personal Access Token button in the OAuth section).
+3. The browser downloads `kaggle.json` to `~/Downloads/kaggle.json`. **This file is the source of truth**, don't copy the token elsewhere.
+4. Move/copy it to `~/.kaggle/kaggle.json` (the CLI reads from this path by default) with permissions 600:
    ```bash
    mkdir -p ~/.kaggle
    mv ~/Downloads/kaggle.json ~/.kaggle/kaggle.json
    chmod 600 ~/.kaggle/kaggle.json
    ```
-5. Verificar:
+5. Verify:
    ```bash
-   kaggle datasets list --user whereisanzi   # deve listar datasets sem erro
+   kaggle datasets list --user whereisanzi   # should list datasets without error
    ```
 
-### O que NÃO fazer
+### What NOT to do
 
-- **Não derive** `kaggle.json` a partir de `KAGGLE_API_TOKEN` no `.env`. Esse campo no `.env.example` do projeto induz a salvar um Personal Access Token (formato `KGAT_*`) que **não autentica o CLI**. Mantemos a entrada `KAGGLE_API_TOKEN` no `.env.example` apenas como referência histórica; a fonte real é `~/.kaggle/kaggle.json`.
-- **Não confie em readonly tests**: o CLI consegue listar datasets mesmo com token sem permissão de write. O único teste real é tentar `kaggle datasets create` ou `kaggle models create` em um diretório de teste.
-- **Não regenere o mesmo tipo de token**: se você gerou um Personal Access Token e o CLI continua falhando, o problema é o tipo do token (não a renovação). Use o botão **"Create New Token"** da seção API.
+- **Do not derive** `kaggle.json` from `KAGGLE_API_TOKEN` in `.env`. That field in the project's `.env.example` leads to saving a Personal Access Token (`KGAT_*` format) that **does not authenticate the CLI**. We keep the `KAGGLE_API_TOKEN` entry in `.env.example` only as a historical reference; the real source is `~/.kaggle/kaggle.json`.
+- **Do not trust readonly tests**: the CLI can list datasets even with a token that has no write permission. The only real test is to try `kaggle datasets create` or `kaggle models create` in a test directory.
+- **Do not regenerate the same token type**: if you generated a Personal Access Token and the CLI still fails, the problem is the token type (not the renewal). Use the **"Create New Token"** button in the API section.
 
-### Diagnóstico: comparar tokens em uso
+### Diagnostics: compare tokens in use
 
-Quando algo dá errado, comparar os tokens disponíveis no Mac (sem vazar valores):
+When something goes wrong, compare the tokens available on the Mac (without leaking values):
 
 ```bash
 python3 <<'PYEOF'
@@ -86,43 +86,43 @@ for p in paths:
 PYEOF
 ```
 
-Procurar:
-- Length 32, prefix alfanum (ex: `bd0282`, `c9828d`) → API Token clássico (OK)
-- Length 37, prefix `KGAT_*` → Personal Access Token (NÃO OK pra CLI)
+Look for:
+- Length 32, alphanumeric prefix (e.g., `bd0282`, `c9828d`) → Classic API Token (OK)
+- Length 37, prefix `KGAT_*` → Personal Access Token (NOT OK for the CLI)
 
-A versão 1.5.x usa endpoints legados em `www.kaggle.com/api/v1/*` que funcionam normalmente.
+Version 1.5.x uses legacy endpoints at `www.kaggle.com/api/v1/*` that work normally.
 
-## Passo 1: Autenticação
+## Step 1: Authentication
 
-### Gerar API key
+### Generate API key
 
-1. https://www.kaggle.com/settings → seção **"API"**
-2. Clique em **"Create Legacy API Key"** (mais confiável que os novos `KGAT_` tokens no CLI 1.5.x)
-3. Download do `kaggle.json`
-4. Mova para `~/.kaggle/kaggle.json`:
+1. https://www.kaggle.com/settings → **"API"** section
+2. Click **"Create Legacy API Key"** (more reliable than the new `KGAT_` tokens with CLI 1.5.x)
+3. Download `kaggle.json`
+4. Move to `~/.kaggle/kaggle.json`:
    ```bash
    mkdir -p ~/.kaggle
    mv ~/Downloads/kaggle.json ~/.kaggle/kaggle.json
    chmod 600 ~/.kaggle/kaggle.json
    ```
 
-### Teste
+### Test
 
 ```bash
 .venv/bin/kaggle competitions list | head -3
 ```
 
-Se retornar competições, auth está ok. Se der 401, refaça o passo de key generation.
+If it returns competitions, auth is fine. If you get a 401, redo the key generation step.
 
-### Dica: cópia local
+### Tip: local copy
 
-Opcionalmente, manter uma cópia em `.kaggle/kaggle.json` dentro do projeto (está gitignored). Útil para sincronizar entre máquinas sem baixar de novo.
+Optionally, keep a copy in `.kaggle/kaggle.json` inside the project (it's gitignored). Useful to sync between machines without downloading again.
 
-## Passo 2: Upload do corpus como dataset
+## Step 2: Upload the corpus as a dataset
 
-O corpus (~2.3 GB) já está no repo em `data/processed/corpus.txt` + tokenizer em `tokenizer/maracatu.model`. O Kaggle não precisa dessa estrutura do repo: precisa de uma pasta com os arquivos + `dataset-metadata.json`.
+The corpus (~2.3 GB) is already in the repo at `data/processed/corpus.txt` + tokenizer at `tokenizer/maracatu.model`. Kaggle does not need that repo structure: it needs a folder with the files + `dataset-metadata.json`.
 
-Usamos **hardlinks** para evitar duplicar 2.2 GB no disco:
+We use **hardlinks** to avoid duplicating 2.2 GB on disk:
 
 ```bash
 mkdir -p .kaggle/corpus-dataset
@@ -139,7 +139,7 @@ Metadata (`dataset-metadata.json`):
 ```json
 {
   "title": "Maracatu Corpus v1",
-  "id": "<SEU_USERNAME>/maracatu-corpus-v1",
+  "id": "<YOUR_USERNAME>/maracatu-corpus-v1",
   "licenses": [{"name": "CC-BY-SA-4.0"}]
 }
 ```
@@ -150,17 +150,17 @@ Upload:
 .venv/bin/kaggle datasets create -p .kaggle/corpus-dataset --dir-mode zip
 ```
 
-Primeiro upload leva ~5-10 min no CLI 1.5.x com ~25 MB/s (dependendo da sua conexão).
+The first upload takes ~5-10 min on CLI 1.5.x at ~25 MB/s (depending on your connection).
 
-### Atualizar uma versão existente
+### Update an existing version
 
 ```bash
-.venv/bin/kaggle datasets version -p .kaggle/corpus-dataset -m "descrição da versão"
+.venv/bin/kaggle datasets version -p .kaggle/corpus-dataset -m "version description"
 ```
 
-## Passo 3: Upload do código como dataset separado
+## Step 3: Upload the code as a separate dataset
 
-O `kaggle_run.py` importa `model.py`, `data.py` e o YAML de config. Esses vão como segundo dataset (pequeno):
+The `kaggle_run.py` imports `model.py`, `data.py` and the YAML config. These go as a second (small) dataset:
 
 ```bash
 mkdir -p .kaggle/code-dataset
@@ -178,7 +178,7 @@ Metadata:
 ```json
 {
   "title": "Maracatu Code",
-  "id": "<SEU_USERNAME>/maracatu-code",
+  "id": "<YOUR_USERNAME>/maracatu-code",
   "licenses": [{"name": "apache-2.0"}]
 }
 ```
@@ -189,11 +189,11 @@ Upload:
 .venv/bin/kaggle datasets create -p .kaggle/code-dataset
 ```
 
-## Passo 4: Criar e disparar o kernel de treino
+## Step 4: Create and trigger the training kernel
 
-O script runner `scripts/kaggle_run.py` (versionado no repo) é o entry point do kernel. Ele importa do dataset de código e lê do dataset de corpus.
+The runner script `scripts/kaggle_run.py` (versioned in the repo) is the kernel's entry point. It imports from the code dataset and reads from the corpus dataset.
 
-Staging do kernel:
+Kernel staging:
 
 ```bash
 mkdir -p .kaggle/kernel
@@ -204,7 +204,7 @@ Metadata (`.kaggle/kernel/kernel-metadata.json`):
 
 ```json
 {
-  "id": "<SEU_USERNAME>/maracatu-20m-training",
+  "id": "<YOUR_USERNAME>/maracatu-20m-training",
   "title": "Maracatu 20M Training",
   "code_file": "kaggle_run.py",
   "language": "python",
@@ -214,8 +214,8 @@ Metadata (`.kaggle/kernel/kernel-metadata.json`):
   "enable_tpu": false,
   "enable_internet": true,
   "dataset_sources": [
-    "<SEU_USERNAME>/maracatu-corpus-v1",
-    "<SEU_USERNAME>/maracatu-code"
+    "<YOUR_USERNAME>/maracatu-corpus-v1",
+    "<YOUR_USERNAME>/maracatu-code"
   ],
   "competition_sources": [],
   "kernel_sources": [],
@@ -223,15 +223,15 @@ Metadata (`.kaggle/kernel/kernel-metadata.json`):
 }
 ```
 
-Push (cria e dispara o run automaticamente):
+Push (creates and triggers the run automatically):
 
 ```bash
 .venv/bin/kaggle kernels push -p .kaggle/kernel
 ```
 
-A saída imprime o link do kernel: `https://www.kaggle.com/code/<user>/maracatu-20m-training`.
+The output prints the kernel link: `https://www.kaggle.com/code/<user>/maracatu-20m-training`.
 
-## Passo 5: Monitorar o treino
+## Step 5: Monitor training
 
 ### Status
 
@@ -239,25 +239,25 @@ A saída imprime o link do kernel: `https://www.kaggle.com/code/<user>/maracatu-
 .venv/bin/kaggle kernels status <user>/maracatu-20m-training
 ```
 
-Estados possíveis: `queued`, `running`, `complete`, `error`, `cancelAcknowledged`.
+Possible states: `queued`, `running`, `complete`, `error`, `cancelAcknowledged`.
 
-### Logs em tempo real
+### Real-time logs
 
-O script usa `print(..., flush=True)` para garantir log unbuffered. No Kaggle, ver logs em tempo real só é possível abrindo o notebook no browser na aba "Log".
+The script uses `print(..., flush=True)` to guarantee unbuffered logs. On Kaggle, viewing logs in real time is only possible by opening the notebook in the browser on the "Log" tab.
 
-### Saída
+### Output
 
-Quando completar, download dos artefatos:
+When it completes, download the artifacts:
 
 ```bash
 .venv/bin/kaggle kernels output <user>/maracatu-20m-training -p checkpoints/kaggle/
 ```
 
-Isso baixa `tokens.npy`, `best.pt`, `latest.pt`, `final.pt` do `/kaggle/working/` pro seu disco local.
+This downloads `tokens.npy`, `best.pt`, `latest.pt`, `final.pt` from `/kaggle/working/` to your local disk.
 
-## Passo 6: Export para HuggingFace
+## Step 6: Export to Hugging Face
 
-Depois que tiver o checkpoint local, rode nosso script de export (já versionado):
+Once you have the checkpoint locally, run our export script (already versioned):
 
 ```bash
 .venv/bin/python scripts/export_hf.py \
@@ -266,24 +266,24 @@ Depois que tiver o checkpoint local, rode nosso script de export (já versionado
     --output-dir exports/maracatu-20m-hf
 ```
 
-O script:
-- Converte nosso `state_dict` para `LlamaForCausalLM` do HF
-- Valida equivalência numérica (bit-a-bit)
-- Salva em `safetensors`
-- Prepara tokenizer SentencePiece como `LlamaTokenizer`
-- Sanity check com `AutoModel.from_pretrained`
+The script:
+- Converts our `state_dict` to HF `LlamaForCausalLM`
+- Validates numerical equivalence (bit-for-bit)
+- Saves as `safetensors`
+- Prepares the SentencePiece tokenizer as `LlamaTokenizer`
+- Sanity check with `AutoModel.from_pretrained`
 
-Publicação:
+Publishing:
 
 ```bash
 .venv/bin/huggingface-cli upload maracatu-ai/maracatu-20m exports/maracatu-20m-hf .
 ```
 
-## Estrutura final do `.kaggle/`
+## Final `.kaggle/` structure
 
 ```
-.kaggle/                        (gitignored: contém credentials + staging)
-├── kaggle.json                 (~/.kaggle/kaggle.json é o que o CLI lê, este é só backup)
+.kaggle/                        (gitignored: contains credentials + staging)
+├── kaggle.json                 (~/.kaggle/kaggle.json is what the CLI reads, this is just backup)
 ├── corpus-dataset/
 │   ├── corpus.txt              (hardlink)
 │   ├── maracatu.model          (hardlink)
@@ -295,25 +295,25 @@ Publicação:
 │   ├── maracatu_20m.yaml
 │   └── dataset-metadata.json
 └── kernel/
-    ├── kaggle_run.py           (cópia de scripts/kaggle_run.py)
+    ├── kaggle_run.py           (copy of scripts/kaggle_run.py)
     └── kernel-metadata.json
 ```
 
 ## Troubleshooting
 
-### 401/403 em endpoints que deveriam funcionar
+### 401/403 on endpoints that should work
 
-Provavelmente CLI 1.6+ ou combinação de env vars stale. Solução:
+Most likely CLI 1.6+ or a combination of stale env vars. Solution:
 
 ```bash
-# Remover env vars stale da sessão shell
+# Remove stale env vars from the shell session
 unset KAGGLE_USERNAME KAGGLE_API_TOKEN KAGGLE_KEY
 
-# Verificar config
+# Check the config
 .venv/bin/kaggle config view
-# Deve mostrar: auth_method=LEGACY_API_KEY, username=<seu>
+# Should show: auth_method=LEGACY_API_KEY, username=<yours>
 
-# Se auth_method estiver ACCESS_TOKEN, forçar legacy via kaggle.json válido
+# If auth_method is ACCESS_TOKEN, force legacy via a valid kaggle.json
 ```
 
 ### "Dataset creation error: slugs and hashlink are all null"
@@ -326,45 +326,45 @@ uv pip install "kaggle==1.5.16"
 
 ### "Invalid Owner Id"
 
-Metadata com `id: del=<hash>/...`: o `del=` é prefixo de conta deletada. Use `<username>/<slug>` direto.
+Metadata with `id: del=<hash>/...`: the `del=` is a deleted-account prefix. Use `<username>/<slug>` directly.
 
-### Kernel trava em "queued" por muito tempo
+### Kernel stays in "queued" for too long
 
-Cota de GPU da semana esgotada. Veja em https://www.kaggle.com/me/account quota restante.
+Weekly GPU quota exhausted. Check remaining quota at https://www.kaggle.com/me/account.
 
-### Kernel roda mas `Device: cpu` (não GPU)
+### Kernel runs but `Device: cpu` (no GPU)
 
-Duas causas possíveis, em ordem:
+Two possible causes, in order:
 
-1. **Phone + Identity verification não feitas** na conta Kaggle. Obrigatórias pra quota de GPU, mesmo em free tier. Faça em https://www.kaggle.com/settings.
-2. **Metadata com `"enable_gpu": "true"` (string entre aspas)** é silenciosamente ignorado. Precisa ser boolean JSON `true` sem aspas. Mesmo erro aplica a `is_private`, `enable_tpu`, `enable_internet`.
+1. **Phone + Identity verification not done** on the Kaggle account. Required for GPU quota, even on the free tier. Set it at https://www.kaggle.com/settings.
+2. **Metadata with `"enable_gpu": "true"` (string in quotes)** is silently ignored. It must be JSON boolean `true` without quotes. The same applies to `is_private`, `enable_tpu`, `enable_internet`.
 
-### Kernel rodou com P100 mas PyTorch não suporta
+### Kernel ran with P100 but PyTorch does not support it
 
-Kaggle aloca P100 por padrão (capability sm_60) quando apenas `enable_gpu: true` é especificado. O PyTorch atual (>= 2.5) não suporta sm_60. Erros típicos:
+Kaggle allocates P100 by default (capability sm_60) when only `enable_gpu: true` is specified. Current PyTorch (>= 2.5) does not support sm_60. Typical errors:
 
 ```
 Tesla P100-PCIE-16GB with CUDA capability sm_60 is not compatible
 with the current PyTorch installation.
 ```
 
-**A solução é mudar o accelerator pra T4 (sm_75, suportado).**
+**The fix is to change the accelerator to T4 (sm_75, supported).**
 
-O campo `accelerator: NvidiaTeslaT4` no kernel-metadata.json é aceito pelo CLI mas **ignorado pelo backend**: P100 continua sendo alocado. Mesmo com CLI 1.6+ que suporta a flag.
+The `accelerator: NvidiaTeslaT4` field in kernel-metadata.json is accepted by the CLI but **ignored by the backend**: P100 keeps getting allocated. Same even with CLI 1.6+ that supports the flag.
 
-**O único jeito confiável de pedir T4:** pelo UI:
+**The only reliable way to request T4:** via the UI:
 
-1. Abra o kernel em `kaggle.com/code/<user>/<slug>`
-2. Clica **"Edit"**
-3. Painel direito → **"Accelerator"** → muda de "GPU P100" para **"GPU T4 x2"** (ou T4 single)
+1. Open the kernel at `kaggle.com/code/<user>/<slug>`
+2. Click **"Edit"**
+3. Right panel → **"Accelerator"** → change "GPU P100" to **"GPU T4 x2"** (or T4 single)
 4. **"Save Version"** → **"Save & Run All (Commit)"**
 
-A preferência **persiste**: pushes subsequentes via CLI continuarão usando T4.
+The preference **persists**: subsequent pushes via CLI will keep using T4.
 
-### Sobrescrever um run em andamento
+### Overwrite a run in progress
 
-`kaggle kernels push` com o mesmo `id` cria uma **nova versão** (version 2, 3…) que automaticamente dispara. O run anterior não é interrompido, fica terminando em paralelo, competindo pela cota. Se quiser matar o anterior, vá no UI: notebook page → aba "Settings" → "Cancel run".
+`kaggle kernels push` with the same `id` creates a **new version** (version 2, 3…) that automatically triggers. The previous run is not interrupted; it keeps finishing in parallel, competing for the quota. To kill the previous one, go to the UI: notebook page → "Settings" tab → "Cancel run".
 
-### Script falha com `ModuleNotFoundError`
+### Script fails with `ModuleNotFoundError`
 
-Verifique se os datasets `maracatu-code` e `maracatu-corpus-v1` estão listados em `dataset_sources` no `kernel-metadata.json`, e se o `kaggle_run.py` adiciona `/kaggle/input/maracatu-code` ao `sys.path`.
+Check that the `maracatu-code` and `maracatu-corpus-v1` datasets are listed in `dataset_sources` in `kernel-metadata.json`, and that `kaggle_run.py` adds `/kaggle/input/maracatu-code` to `sys.path`.

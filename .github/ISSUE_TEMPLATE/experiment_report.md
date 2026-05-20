@@ -1,40 +1,40 @@
 ---
-name: Relatar experimento
-about: Resultado de um run de treino ou eval em hardware/config nova
+name: Report experiment
+about: Result of a training or eval run on new hardware/config
 title: "[exp] "
 labels: experiment
 assignees: ''
 ---
 
-## Resumo
+## Summary
 
-<!-- Em uma linha: que experimento foi, que hardware, que métrica final. -->
+<!-- In one line: what experiment, what hardware, what final metric. -->
 
 ## Hardware
 
 - GPU(s):
 - VRAM:
-- Provedor (Kaggle / Modal / RunPod / local):
+- Provider (Kaggle / Modal / RunPod / local):
 
 ## Config
 
 ```yaml
-cole aqui o config YAML usado
+paste the YAML config used here
 ```
 
-## Resultados
+## Results
 
-- Total de iters / tokens:
-- Tempo total de treino:
+- Total iters / tokens:
+- Total training time:
 - Throughput (tokens/s):
-- Loss final (train / val):
-- Perplexidade (val):
-- Custo (se aplicável):
+- Final loss (train / val):
+- Perplexity (val):
+- Cost (if applicable):
 
-## Observações
+## Notes
 
-<!-- O que funcionou? O que falhou? Hipóteses sobre o resultado? -->
+<!-- What worked? What failed? Hypotheses about the result? -->
 
-## Arquivos
+## Files
 
-<!-- Cole links para checkpoints, logs, samples gerados. Se planeja adicionar entrada em docs/experiments/, indique o nome do arquivo. -->
+<!-- Paste links to checkpoints, logs, generated samples. If you plan to add an entry under docs/experiments/, indicate the filename. -->
