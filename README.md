@@ -1,5 +1,3 @@
-<div align="center">
-
 # Maracatu
 
 **Brazilian LLMs, trained from scratch, in Portuguese, by Brazilians.**
@@ -7,10 +5,6 @@
 Open source project for pretraining language models in Brazilian Portuguese, with open weights under Apache 2.0 and a focus on national AI sovereignty.
 
 [maracatu.org](https://maracatu.org) · [Hugging Face](https://huggingface.co/maracatu-ai) · [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md)
-
-</div>
-
----
 
 ## Released models
 
@@ -20,16 +14,6 @@ Open source project for pretraining language models in Brazilian Portuguese, wit
 | **Maracatu-80M** | 87.8M | 21.34 | Wiki + Gutenberg + CulturaX-PT (~1.6B tok) | [maracatu-ai/maracatu-80m](https://huggingface.co/maracatu-ai/maracatu-80m) | coming soon |
 
 See [MODEL_CARD.md](MODEL_CARD.md) for technical details.
-
-## Roadmap
-
-Release ladder, each one ~10x larger than the previous:
-
-- [x] **Maracatu-20M** — pipeline validation (Wikipedia PT, T4 Kaggle)
-- [x] **Maracatu-80M** — expanded corpus 1.6B tokens, surpasses Tucano-160M in PP
-- [ ] **Maracatu-800M** — first conversational model, instruction tuning
-- [ ] **Maracatu-8B** — competitive with Llama-3-8B on PT-BR benchmarks
-- [ ] **Maracatu-80B** — *North Star* — parity with Llama-3.1-70B on Brazilian benchmarks
 
 ## Architecture
 
