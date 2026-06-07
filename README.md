@@ -4,14 +4,14 @@
 
 Open source project for pretraining language models in Brazilian Portuguese, with open weights under Apache 2.0 and a focus on national AI sovereignty.
 
-[maracatu.org](https://maracatu.org) · [Hugging Face](https://huggingface.co/maracatu-ai) · [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md)
+[maracatu.org](https://maracatu.org) · [Hugging Face](https://huggingface.co/maracatu-labs) · [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md)
 
 ## Released models
 
 | Model | Parameters | Val Perplexity | Corpus | Hugging Face | Ollama |
 |-------|:----------:|:--------------:|--------|--------------|--------|
-| **Maracatu-20M** | 17M | 23.81 | Wikipedia PT (~550M tok) | [maracatu-ai/maracatu-20m](https://huggingface.co/maracatu-ai/maracatu-20m) | [whereisanzi/maracatu-20m](https://ollama.com/whereisanzi/maracatu-20m) |
-| **Maracatu-80M** | 87.8M | 21.34 | Wiki + Gutenberg + CulturaX-PT (~1.6B tok) | [maracatu-ai/maracatu-80m](https://huggingface.co/maracatu-ai/maracatu-80m) | [whereisanzi/maracatu-80m](https://ollama.com/whereisanzi/maracatu-80m) |
+| **Maracatu-20M** | 17M | 23.81 | Wikipedia PT (~550M tok) | [maracatu-labs/maracatu-20m](https://huggingface.co/maracatu-labs/maracatu-20m) | [whereisanzi/maracatu-20m](https://ollama.com/whereisanzi/maracatu-20m) |
+| **Maracatu-80M** | 87.8M | 21.34 | Wiki + Gutenberg + CulturaX-PT (~1.6B tok) | [maracatu-labs/maracatu-80m](https://huggingface.co/maracatu-labs/maracatu-80m) | [whereisanzi/maracatu-80m](https://ollama.com/whereisanzi/maracatu-80m) |
 
 See [MODEL_CARD.md](MODEL_CARD.md) for technical details.
 

@@ -14,7 +14,7 @@
 - **Temperature:** T=0 (greedy/loglikelihood) for all MCQ benchmarks -- lm-eval's default behavior for `output_type: multiple_choice`
 - **Batch size:** 8 (CPU-safe for models up to 630M)
 - **Models evaluated:**
-  - `maracatu-ai/maracatu-20m` -- 17M params, 16k vocab, context 512
+  - `maracatu-labs/maracatu-20m` -- 17M params, 16k vocab, context 512
   - `TucanoBR/Tucano-160m` -- 160M params, canonical BR baseline at the same tier
   - `TucanoBR/Tucano-630m` -- 630M params, next tier up, to measure the scale gap
 
@@ -174,7 +174,7 @@ python3 -m venv .cache/lm-eval-venv
 cd .cache/lm-evaluation-harness && ../.cache/lm-eval-venv/bin/pip install -e "[hf]" --quiet
 
 # Run all benchmarks (see script in scripts/eval/run_benchmarks.sh)
-bash scripts/eval/run_benchmarks.sh maracatu-ai/maracatu-20m
+bash scripts/eval/run_benchmarks.sh maracatu-labs/maracatu-20m
 
 # Results saved to eval_results/<model-slug>/ (gitignored)
 ```

@@ -7,7 +7,7 @@ VENV_DIR="${REPO_DIR}/.venv"
 CONFIG="${REPO_DIR}/configs/maracatu_80m.yaml"
 CKPT_DIR="${REPO_DIR}/checkpoints"
 LOG_FILE="${CKPT_DIR}/training.log"
-HF_REPO="maracatu-ai/maracatu-80m-checkpoints"
+HF_REPO="maracatu-labs/maracatu-80m-checkpoints"
 HF_REPO_TYPE="model"
 
 export PYTHONUNBUFFERED=1

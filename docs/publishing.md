@@ -1,7 +1,7 @@
 # Maracatu AI: multi-channel publishing guide
 
 **Channels**: Hugging Face Hub (primary) + Ollama Hub (secondary) + Kaggle Models (tertiary)
-**Naming convention**: `maracatu-ai/maracatu-<scale>`, lowercase, hyphen, no underscores
+**Naming convention**: `maracatu-labs/maracatu-<scale>`, lowercase, hyphen, no underscores
 **Last revised**: 2026-04-19
 
 ---
@@ -96,7 +96,7 @@ To check that you're authenticated:
 
 ```bash
 .venv/bin/huggingface-cli whoami
-# should return your username and the maracatu-ai org in the listed orgs
+# should return your username and the maracatu-labs org in the listed orgs
 ```
 
 **Ollama Hub**: do once per machine:
@@ -105,7 +105,7 @@ To check that you're authenticated:
 ollama login
 # Opens the browser to authenticate at ollama.com
 # Requires an account at https://ollama.com; that account's username becomes the model namespace
-# Ollama has no org concept: the namespace is always personal (e.g., maracatu-ai, maracatuai, whereisanzi)
+# Ollama has no org concept: the namespace is always personal (e.g., maracatuai, whereisanzi)
 ```
 
 **Kaggle**: already configured in `~/.kaggle/kaggle.json` (see [`docs/kaggle.md`](kaggle.md)).
@@ -114,7 +114,7 @@ ollama login
 
 | Channel | Namespace | Creation |
 |---|---|---|
-| HF Hub | `maracatu-ai/maracatu-<scale>` | automatic via `huggingface-cli upload` |
+| HF Hub | `maracatu-labs/maracatu-<scale>` | automatic via `huggingface-cli upload` |
 | Ollama Hub (M-20M → M-800M) | `whereisanzi/maracatu-<scale>` | personal account already exists; created automatically by `ollama push` |
 | Ollama Hub (M-8B+) | `maracatuai/maracatu-<scale>` | dedicated username to be reserved now at ollama.com (Ollama does not allow `.` in the username; `maracatuai` is the valid form) |
 | Kaggle Models | `whereisanzi/maracatu-<scale>` | **mandatory to create via UI before the first CLI upload**: see Step 6 |
@@ -124,7 +124,7 @@ ollama login
 > - **M-8B onward** (first serious model, pitch for grants): migrate to dedicated username `maracatuai` (Ollama doesn't accept `.` nor `-` in all cases; `maracatuai` is the safe form). **Reserve that username now at https://ollama.com**, even before using it, to guarantee availability.
 > - Older models stay in the original namespace; new releases use the new one. Don't try to "move" a model between namespaces on Ollama Hub: just republish with the new namespace and mark the old one as deprecated in the model card.
 >
-> **Namespace asymmetry across channels** is expected: HF uses the `maracatu-ai` org; Ollama and Kaggle use a personal username (neither has an org concept). Document this explicitly in MODEL_CARD.md to avoid confusion for users.
+> **Namespace asymmetry across channels** is expected: HF uses the `maracatu-labs` org; Ollama and Kaggle use a personal username (neither has an org concept). Document this explicitly in MODEL_CARD.md to avoid confusion for users.
 
 ---
 
@@ -199,12 +199,12 @@ exports/maracatu-20m-hf/
 ### Step 2: HF Hub upload (safetensors)
 
 ```bash
-.venv/bin/huggingface-cli upload maracatu-ai/maracatu-20m exports/maracatu-20m-hf .
+.venv/bin/huggingface-cli upload maracatu-labs/maracatu-20m exports/maracatu-20m-hf .
 ```
 
 This command creates the repo if it doesn't exist and uploads all files from the directory. For larger models (>2GB per file), add `--max-shard-size 2GB` in the `save_pretrained` of `export_hf.py` before running Step 1: this shards the safetensors automatically. The `huggingface-cli` already uses Git LFS for large files when needed; no manual configuration required.
 
-After the upload, configure via the HF Hub UI (at `huggingface.co/maracatu-ai/maracatu-20m/settings`):
+After the upload, configure via the HF Hub UI (at `huggingface.co/maracatu-labs/maracatu-20m/settings`):
 - `pipeline_tag: text-generation`
 - `library_name: transformers`
 - Add `README.md` based on `MODEL_CARD.md` from the repo
@@ -214,7 +214,7 @@ After the upload, configure via the HF Hub UI (at `huggingface.co/maracatu-ai/ma
 | Error | Cause | Solution |
 |---|---|---|
 | `401 Unauthorized` | token without write scope or expired | `huggingface-cli login` with the correct token |
-| `Repository not found` | `maracatu-ai` org without permission in the token | check that the token belongs to the account that owns the org |
+| `Repository not found` | `maracatu-labs` org without permission in the token | check that the token belongs to the account that owns the org |
 | Upload hangs on a large file | network timeout | `--chunk-size 50000000` on the upload |
 | `OSError: git-lfs not found` | git-lfs not installed (required for >5GB) | `brew install git-lfs && git lfs install` |
 
@@ -301,7 +301,7 @@ The GGUFs go in the same repo as the safetensors, in the `gguf/` subfolder. This
 ```bash
 for quant in Q4_K_M Q5_K_M Q8_0; do
     .venv/bin/huggingface-cli upload \
-        maracatu-ai/maracatu-20m \
+        maracatu-labs/maracatu-20m \
         "exports/maracatu-20m-gguf/maracatu-20m-${quant}.gguf" \
         "gguf/maracatu-20m-${quant}.gguf"
 done
@@ -346,7 +346,7 @@ Notes on the fields:
 #### 5b. Create local model, test and publish
 
 ```bash
-# Replace <username> with the real Ollama account username (e.g., maracatu-ai, maracatuai or whereisanzi)
+# Replace <username> with the real Ollama account username (e.g., maracatuai or whereisanzi)
 USERNAME=<username>
 
 # 1. Create the local model (registers it in the Ollama daemon)
@@ -447,7 +447,7 @@ Apply consistently across all channels, files and commands:
 
 | Field | Format | Examples |
 |---|---|---|
-| HF Hub repo | `maracatu-ai/maracatu-<scale>` | `maracatu-ai/maracatu-20m`, `maracatu-ai/maracatu-500m` |
+| HF Hub repo | `maracatu-labs/maracatu-<scale>` | `maracatu-labs/maracatu-20m`, `maracatu-labs/maracatu-500m` |
 | Ollama Hub model (M-20M → M-800M) | `whereisanzi/maracatu-<scale>` | `whereisanzi/maracatu-20m` |
 | Ollama Hub model (M-8B+) | `maracatuai/maracatu-<scale>` | `maracatuai/maracatu-7b` (migration at M-8B) |
 | Kaggle Models model | `whereisanzi/maracatu-<scale>` | `whereisanzi/maracatu-20m` |

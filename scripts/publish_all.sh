@@ -46,7 +46,7 @@ if [[ ! -f "$TOKENIZER" ]]; then
     exit 1
 fi
 
-HF_REPO="maracatu-ai/${MODEL_NAME}"
+HF_REPO="maracatu-labs/${MODEL_NAME}"
 OLLAMA_REPO="${OLLAMA_USER}/${MODEL_NAME}"
 EXPORT_HF_DIR="${REPO_ROOT}/exports/${MODEL_NAME}-hf"
 EXPORT_GGUF_DIR="${REPO_ROOT}/exports/${MODEL_NAME}-gguf"

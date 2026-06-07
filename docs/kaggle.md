@@ -276,7 +276,7 @@ The script:
 Publishing:
 
 ```bash
-.venv/bin/huggingface-cli upload maracatu-ai/maracatu-20m exports/maracatu-20m-hf .
+.venv/bin/huggingface-cli upload maracatu-labs/maracatu-20m exports/maracatu-20m-hf .
 ```
 
 ## Final `.kaggle/` structure

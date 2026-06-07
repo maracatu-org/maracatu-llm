@@ -142,7 +142,7 @@ These are accurate descriptions of what the model can and cannot do at 17M param
 
 | Channel | Link | What you get |
 |---|---|---|
-| HuggingFace Hub | [maracatu-ai/maracatu-20m](https://huggingface.co/maracatu-ai/maracatu-20m) | safetensors, GGUF files, full model card |
+| HuggingFace Hub | [maracatu-labs/maracatu-20m](https://huggingface.co/maracatu-labs/maracatu-20m) | safetensors, GGUF files, full model card |
 | Ollama | [ollama.com/whereisanzi/maracatu-20m](https://ollama.com/whereisanzi/maracatu-20m) | Q4_K_M, Q5_K_M, Q8_0 quantizations |
 | GitHub | [maracatu-labs/maracatu](https://github.com/maracatu-labs/maracatu) | Architecture, training scripts, experiment logs, roadmap |
 | Kaggle Models (this page) | [whereisanzi/maracatu-20m](https://www.kaggle.com/models/whereisanzi/maracatu-20m) | Original checkpoint, training kernel |
@@ -161,6 +161,6 @@ Training data (Wikipedia PT) is licensed [CC BY-SA 4.0](https://creativecommons.
   title        = {Maracatu-20M: A Brazilian Portuguese Language Model Trained from Scratch},
   year         = {2026},
   publisher    = {HuggingFace},
-  howpublished = {\url{https://huggingface.co/maracatu-ai/maracatu-20m}},
+  howpublished = {\url{https://huggingface.co/maracatu-labs/maracatu-20m}},
 }
 ```

@@ -20,7 +20,7 @@ Uso:
         --output-dir exports/maracatu-20m-hf
 
 Depois, para publicar no HF Hub:
-    huggingface-cli upload maracatu-ai/maracatu-20m exports/maracatu-20m-hf .
+    huggingface-cli upload maracatu-labs/maracatu-20m exports/maracatu-20m-hf .
 """
 
 from __future__ import annotations
@@ -212,7 +212,7 @@ def main() -> None:
 
     print(f"\n✓ Export completo em {args.output_dir}")
     print("\nPara publicar no HuggingFace Hub:")
-    print(f"  huggingface-cli upload maracatu-ai/maracatu-20m {args.output_dir} .")
+    print(f"  huggingface-cli upload maracatu-labs/maracatu-20m {args.output_dir} .")
     print("\nPara testar via transformers:")
     print(f"""
     from transformers import AutoModelForCausalLM, AutoTokenizer

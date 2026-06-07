@@ -1,13 +1,13 @@
 
 set -euo pipefail
 
-REPO_URL="https://github.com/maracatu-ai/maracatu.git"
+REPO_URL="https://github.com/maracatu-labs/maracatu.git"
 REPO_BRANCH="main"
 REPO_DIR="/workspace/maracatu"
 PYTHON_VERSION="3.12"
 VENV_DIR="${REPO_DIR}/.venv"
 CORPUS_METHOD="${CORPUS_METHOD:-hf}"
-HF_DATASET_REPO="${HF_DATASET_REPO:-maracatu-ai/maracatu-corpus-v2}"
+HF_DATASET_REPO="${HF_DATASET_REPO:-maracatu-labs/maracatu-corpus-v2}"
 MIN_DISK_GB=40
 
 log() { echo "[bootstrap] $(date '+%H:%M:%S') $*"; }

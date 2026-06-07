@@ -136,14 +136,14 @@ These are not disclaimers — they are accurate descriptions of what this model 
 
 ### HuggingFace Hub — safetensors + GGUF files
 
-[huggingface.co/maracatu-ai/maracatu-20m](https://huggingface.co/maracatu-ai/maracatu-20m)
+[huggingface.co/maracatu-labs/maracatu-20m](https://huggingface.co/maracatu-labs/maracatu-20m)
 
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-tokenizer = AutoTokenizer.from_pretrained("maracatu-ai/maracatu-20m", use_fast=False)
-model = AutoModelForCausalLM.from_pretrained("maracatu-ai/maracatu-20m")
+tokenizer = AutoTokenizer.from_pretrained("maracatu-labs/maracatu-20m", use_fast=False)
+model = AutoModelForCausalLM.from_pretrained("maracatu-labs/maracatu-20m")
 model.eval()
 
 inputs = tokenizer("O Brasil é", return_tensors="pt")
@@ -178,7 +178,7 @@ Training data (Wikipedia PT) is licensed [CC BY-SA 4.0](https://creativecommons.
   title        = {Maracatu-20M: A Brazilian Portuguese Language Model Trained from Scratch},
   year         = {2026},
   publisher    = {HuggingFace},
-  howpublished = {\url{https://huggingface.co/maracatu-ai/maracatu-20m}},
+  howpublished = {\url{https://huggingface.co/maracatu-labs/maracatu-20m}},
 }
 ```
 

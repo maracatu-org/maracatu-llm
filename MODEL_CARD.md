@@ -31,7 +31,7 @@ model-index:
 
 Open-weight Brazilian Portuguese language models trained from scratch. Apache 2.0. Architecture compatible with `LlamaForCausalLM`.
 
-**Organization:** [huggingface.co/maracatu-ai](https://huggingface.co/maracatu-ai) | **Code:** [github.com/maracatu-labs/maracatu](https://github.com/maracatu-labs/maracatu)
+**Organization:** [huggingface.co/maracatu-labs](https://huggingface.co/maracatu-labs) | **Code:** [github.com/maracatu-labs/maracatu](https://github.com/maracatu-labs/maracatu)
 
 ---
 
@@ -39,8 +39,8 @@ Open-weight Brazilian Portuguese language models trained from scratch. Apache 2.
 
 | Model | Parameters | Val Perplexity | Corpus | Released |
 |---|---|---|---|---|
-| [Maracatu-20M](https://huggingface.co/maracatu-ai/maracatu-20m) | 17M | 23.81 | Wikipedia PT (~550M tok) | April 2026 |
-| [Maracatu-80M](https://huggingface.co/maracatu-ai/maracatu-80m) | 87.80M | 21.34 | Wikipedia + Gutenberg + CulturaX-PT (~1.60B tok) | April 2026 |
+| [Maracatu-20M](https://huggingface.co/maracatu-labs/maracatu-20m) | 17M | 23.81 | Wikipedia PT (~550M tok) | April 2026 |
+| [Maracatu-80M](https://huggingface.co/maracatu-labs/maracatu-80m) | 87.80M | 21.34 | Wikipedia + Gutenberg + CulturaX-PT (~1.60B tok) | April 2026 |
 
 ---
 
@@ -121,8 +121,8 @@ Filtering: MinHash LSH dedup (Jaccard 0.85), PII regex (CPF/email/CEP/phone BR),
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-tokenizer = AutoTokenizer.from_pretrained("maracatu-ai/maracatu-80m", use_fast=False)
-model = AutoModelForCausalLM.from_pretrained("maracatu-ai/maracatu-80m")
+tokenizer = AutoTokenizer.from_pretrained("maracatu-labs/maracatu-80m", use_fast=False)
+model = AutoModelForCausalLM.from_pretrained("maracatu-labs/maracatu-80m")
 model.eval()
 
 inputs = tokenizer("O Brasil é", return_tensors="pt")
@@ -165,6 +165,6 @@ print(tokenizer.decode(out[0], skip_special_tokens=True))
   title     = {Maracatu-80M: An Open-Weight Brazilian Portuguese Language Model},
   year      = {2026},
   publisher = {Hugging Face},
-  url       = {https://huggingface.co/maracatu-ai/maracatu-80m},
+  url       = {https://huggingface.co/maracatu-labs/maracatu-80m},
 }
 ```

@@ -24,25 +24,25 @@ The three files below are **not in git** (gitignored) and need to be available f
 
 **Recommended canonical method: private HF Dataset**
 
-Upload the three files to a private dataset under the `maracatu-ai` org on the HF Hub:
+Upload the three files to a private dataset under the `maracatu-labs` org on the HF Hub:
 
 ```bash
 # On your Mac, inside the repo
 huggingface-cli login   # use your HF_TOKEN
 
 # Create the private dataset (once)
-huggingface-cli repo create maracatu-corpus-v2 --type dataset --organization maracatu-ai --private
+huggingface-cli repo create maracatu-corpus-v2 --type dataset --organization maracatu-labs --private
 
 # Upload the assets (keeping directory structure)
-huggingface-cli upload maracatu-ai/maracatu-corpus-v2 \
+huggingface-cli upload maracatu-labs/maracatu-corpus-v2 \
     data/processed/corpus_v2.txt data/processed/corpus_v2.txt \
     --repo-type dataset
 
-huggingface-cli upload maracatu-ai/maracatu-corpus-v2 \
+huggingface-cli upload maracatu-labs/maracatu-corpus-v2 \
     data/processed/tokens.npy data/processed/tokens.npy \
     --repo-type dataset
 
-huggingface-cli upload maracatu-ai/maracatu-corpus-v2 \
+huggingface-cli upload maracatu-labs/maracatu-corpus-v2 \
     tokenizer/maracatu.model tokenizer/maracatu.model \
     --repo-type dataset
 ```
@@ -55,7 +55,7 @@ Why a private HF dataset instead of the other options:
 
 ### 3. HF_TOKEN available
 
-The token must have read permission on the private dataset `maracatu-ai/maracatu-corpus-v2` and write permission on the repo `maracatu-ai/maracatu-80m-checkpoints`.
+The token must have read permission on the private dataset `maracatu-labs/maracatu-corpus-v2` and write permission on the repo `maracatu-labs/maracatu-80m-checkpoints`.
 
 Create it at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) with `write` scope (write includes read).
 
@@ -104,9 +104,9 @@ Inside the pod, run the bootstrap (replace HF_TOKEN if it isn't in the env):
 ```bash
 export HF_TOKEN=hf_xxxxxxxxxxxx   # if you didn't configure it on the pod as an env var
 export CORPUS_METHOD=hf
-export HF_DATASET_REPO=maracatu-ai/maracatu-corpus-v2
+export HF_DATASET_REPO=maracatu-labs/maracatu-corpus-v2
 
-curl -fsSL https://raw.githubusercontent.com/maracatu-ai/maracatu/main/scripts/runpod_bootstrap.sh \
+curl -fsSL https://raw.githubusercontent.com/maracatu-labs/maracatu/main/scripts/runpod_bootstrap.sh \
     | bash
 ```
 
@@ -174,7 +174,7 @@ To resume:
 ```bash
 export HF_TOKEN=hf_xxxxxxxxxxxx
 export CORPUS_METHOD=hf
-export HF_DATASET_REPO=maracatu-ai/maracatu-corpus-v2
+export HF_DATASET_REPO=maracatu-labs/maracatu-corpus-v2
 bash /workspace/maracatu/scripts/runpod_bootstrap.sh
 ```
 
@@ -199,7 +199,7 @@ The bootstrap will re-clone the repo and re-download the assets from HF. `latest
 `runpod_train.sh` automatically uploads `best.pt` and `final.pt` to the HF Hub when it finishes. Verify at:
 
 ```
-https://huggingface.co/maracatu-ai/maracatu-80m-checkpoints
+https://huggingface.co/maracatu-labs/maracatu-80m-checkpoints
 ```
 
 ### Manual download from the pod to the Mac
@@ -233,7 +233,7 @@ To protect against loss on Community Cloud, you can upload manually at any time 
 ```bash
 ssh root@<pod-ip> -p <port>
 source /workspace/maracatu/.venv/bin/activate
-huggingface-cli upload maracatu-ai/maracatu-80m-checkpoints \
+huggingface-cli upload maracatu-labs/maracatu-80m-checkpoints \
     /workspace/maracatu/checkpoints/latest.pt checkpoints/latest.pt \
     --repo-type model
 ```
